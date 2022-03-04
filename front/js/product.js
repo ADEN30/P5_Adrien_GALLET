@@ -2,6 +2,7 @@ let tab = window.location.search;
 const id = tab.split("=");
 const _Url = "http://localhost:3000/api/products";
 
+let titre = document.querySelector("head title");
 let sel = document.querySelector("select");
 let button = document.querySelector("#quantity");
 let addPanier = document.getElementById("addToCart");
@@ -42,7 +43,9 @@ async function AffichagePage(){
     for(let i = 0; i< data.length; i++){
         if(data[i]._id == id[1]){
             document.getElementById("image").setAttribute("src",data[i].imageUrl);
+            document.getElementById("image").setAttribute("alt", data[i].)
             document.getElementById("title").innerText = data[i].name;
+            titre.innerText = data[i].name;
             document.getElementById("price").innerText = data[i].price;
             document.getElementById("description").innerText = data[i].description;
             await getColors(i);
