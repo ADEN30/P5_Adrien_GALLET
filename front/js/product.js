@@ -43,7 +43,7 @@ async function AffichagePage(){
     for(let i = 0; i< data.length; i++){
         if(data[i]._id == id[1]){
             document.getElementById("image").setAttribute("src",data[i].imageUrl);
-            document.getElementById("image").setAttribute("alt", data[i].)
+            document.getElementById("image").setAttribute("alt", data[i].altTxt);
             document.getElementById("title").innerText = data[i].name;
             titre.innerText = data[i].name;
             document.getElementById("price").innerText = data[i].price;
