@@ -240,45 +240,80 @@ async function VerificationForm(){
     firstName.addEventListener("input", function(){
         if(nameRegex.test(firstName.value)){
         firstName.style.boxShadow = "0px 0px 0px 3px green";
+        document.getElementById("firstNameErrorMsg").style.display = "none";
+    }
+    else if(firstName.value == ""){
+        document.getElementById("firstNameErrorMsg").style.display = "none";
+        firstName.style.boxShadow = "0px 0px 0px 0px transparent";
     }
     else{
+        document.getElementById("firstNameErrorMsg").style.display = "block";
         firstName.style.boxShadow = "0px 0px 0px 3px red";
+        document.getElementById("firstNameErrorMsg").innerText = " Minimum : 2 lettres,  Exemple : Jean";
     }
     BtnEnvois(nameRegex.test(firstName.value),nameRegex.test(lastName.value), adressRegex.test(address.value), cityRegex.test(city.value), emailRegex.test(email.value))
     });
     lastName.addEventListener("input", function(){
         if(nameRegex.test(lastName.value)){
+            document.getElementById("lastNameErrorMsg").style.display = "none";
         lastName.style.boxShadow = "0px 0px 0px 3px green";
     }
+    else if(lastName.value == ""){
+        document.getElementById("lastNameErrorMsg").style.display = "none";
+        lastName.style.boxShadow = "0px 0px 0px 0px transparent";
+    }
     else{
+        document.getElementById("lastNameErrorMsg").style.display = "block";
         lastName.style.boxShadow = "0px 0px 0px 3px red";
+        document.getElementById("lastNameErrorMsg").innerText = "Minimum : 2 lettres, Exemple : Bodin";
     }
     BtnEnvois(nameRegex.test(firstName.value),nameRegex.test(lastName.value), adressRegex.test(address.value), cityRegex.test(city.value), emailRegex.test(email.value))
     });
     address.addEventListener("input", function(){
         if(adressRegex.test(address.value)){
+            document.getElementById("addressErrorMsg").style.display = "none";
         address.style.boxShadow = "0px 0px 0px 3px green";
     }
+    else if(address.value == ""){
+        document.getElementById("addressErrorMsg").style.display = "none";
+        address.style.boxShadow = "0px 0px 0px 0px transparent";
+    }
     else{
+        document.getElementById("addressErrorMsg").style.display = "block";
         address.style.boxShadow = "0px 0px 0px 3px red";
+        document.getElementById("addressErrorMsg").innerText = "Format adresse : 13 rue/route nom de la rue";
     }
     BtnEnvois(nameRegex.test(firstName.value),nameRegex.test(lastName.value), adressRegex.test(address.value), cityRegex.test(city.value), emailRegex.test(email.value))
     });
     city.addEventListener("input", function(){
         if(cityRegex.test(city.value)){
+            document.getElementById("cityErrorMsg").style.display = "none";
         city.style.boxShadow = "0px 0px 0px 3px green";
+    }
+    else if(city.value == ""){
+        document.getElementById("cityErrorMsg").style.display = "none";
+        city.style.boxShadow = "0px 0px 0px 0px transparent";
     }
     else{
         city.style.boxShadow = "0px 0px 0px 3px red";
+        document.getElementById("cityErrorMsg").style.display = "block";
+        document.getElementById("cityErrorMsg").innerText = "Nombre et caractères spéciaux sont interdits.";
     }
     BtnEnvois(nameRegex.test(firstName.value),nameRegex.test(lastName.value), adressRegex.test(address.value), cityRegex.test(city.value), emailRegex.test(email.value))
     });
     email.addEventListener("input", function(){
     if(emailRegex.test(email.value)){
+        document.getElementById("emailErrorMsg").style.display = "none";
         email.style.boxShadow = "0px 0px 0px 3px green";
+    }
+    else if(email.value == ""){
+        email.style.boxShadow = "0px 0px 0px 0px transparent";
+        document.getElementById("emailErrorMsg").style.display = "none";
     }
     else{
         email.style.boxShadow = "0px 0px 0px 3px red";
+        document.getElementById("emailErrorMsg").style.display = "block";
+        document.getElementById("emailErrorMsg").innerText = "Ecrire une adresse mail valide.";
     }
     
     BtnEnvois(nameRegex.test(firstName.value),nameRegex.test(lastName.value), adressRegex.test(address.value), cityRegex.test(city.value), emailRegex.test(email.value))
