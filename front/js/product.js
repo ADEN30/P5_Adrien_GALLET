@@ -2,6 +2,30 @@ let tab = window.location.search;
 const id = tab.split("=");
 const _Url = "http://localhost:3000/api/products";
 
+let sel = document.querySelector("select");
+let button = document.querySelector("#quantity");
+let addPanier = document.getElementById("addToCart");
+let couleur ="";
+let NbRegex = /^([1-9]|[1-9][0-9]|100)$/;
+
+
+sel.addEventListener("change", function(){
+    if(NbRegex.test(button.value) && sel.value != ""){
+        addPanier.style.display = "block";
+    }
+    else{
+        addPanier.style.display = "none";
+    }
+});
+button.addEventListener("change", function(){
+    if(NbRegex.test(button.value) && sel.value != ""){
+        addPanier.style.display = "block";
+    }
+    else{
+        addPanier.style.display = "none";
+    }
+    
+});
 
 console.log(tab);
 console.log(id[1]);
@@ -13,6 +37,7 @@ async function _GetHttp(lien){
 }
 
 async function AffichagePage(){
+    addPanier.style.display = "none";
     const data = await _GetHttp(_Url);
     for(let i = 0; i< data.length; i++){
         if(data[i]._id == id[1]){
@@ -54,39 +79,37 @@ async function getColors(i){
     }
     
 }
-async function listenSend(){
-    document.getElementById("addToCart").addEventListener("click", function(e){
-        
-        
-        let sel = document.querySelector("select");
-        let button = document.querySelector("#quantity");
-        let object = {
-            identifiant : id[1],
-            quantite : button.value,
-            color : sel.value
-        };
-
-        let valeur = localStorage.getItem((id[1] + object.color));
-        console.log(valeur);
-        if(valeur != null){
+async function listenAndSend(){
+    addPanier.style.display = "block";
+        addPanier.addEventListener("click", function(e){
+            
+            let object = {
+                identifiant : id[1],
+                quantite : button.value,
+                color : sel.value
+            };
+            let valeur = localStorage.getItem((id[1] + object.color));
+            console.log(valeur);
             let PastObject = JSON.parse(valeur);
-            console.log(PastObject.quantite);
-
-            for( item in localStorage){
-                if(item  == id[1] + sel.value){
-                    object.quantite = parseInt(button.value) + parseInt(PastObject.quantite);
+            
+            if(valeur != null){
+                for( item in localStorage){
+                    if(item  == id[1] + sel.value){
+                        
+                        object.quantite = parseInt(object.quantite) + parseInt(PastObject.quantite);
+                        
+                    }
                 }
             }
-        }
-        let article = JSON.stringify(object);
-        localStorage.setItem( id[1] + object.color, article);
-    });
+            let article = JSON.stringify(object);
+            localStorage.setItem( id[1] + object.color, article);
+        });
 }
 
 
 async function main(){
     
     await AffichagePage();
-    await listenSend();
+    await listenAndSend();
 }
 main();
