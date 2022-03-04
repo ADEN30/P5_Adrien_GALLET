@@ -37,7 +37,7 @@ async function _GetHttp(lien){
 }
 
 async function AffichagePage(){
-    addPanier.style.display = "none";
+    
     const data = await _GetHttp(_Url);
     for(let i = 0; i< data.length; i++){
         if(data[i]._id == id[1]){
@@ -80,7 +80,7 @@ async function getColors(i){
     
 }
 async function listenAndSend(){
-    addPanier.style.display = "block";
+    addPanier.style.display = "none";
         addPanier.addEventListener("click", function(e){
             
             let object = {
@@ -110,6 +110,6 @@ async function listenAndSend(){
 async function main(){
     
     await AffichagePage();
-    await listenAndSend();
+    listenAndSend();
 }
 main();
