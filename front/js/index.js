@@ -24,7 +24,7 @@ async function Print (items){
             document.getElementById("productName").innerText = items[0].name;
             document.getElementById("productDescription").innerText = items[0].description;
             document.querySelector("#items a article img").setAttribute("src", items[0].imageUrl);
-            document.querySelector("#items a").setAttribute("href", "./product.html?id=" +items[0]._id);
+            document.querySelector("#items a").setAttribute("href", "./front/html/product.html?id=" +items[0]._id);
         }
         else{
             let p = document.createElement("p");
@@ -33,7 +33,7 @@ async function Print (items){
             let a = document.createElement("a");
             let image = document.createElement("img");
             document.getElementById("items").appendChild(a);
-            a.setAttribute("href","./product.html?id=" + items[i]._id);
+            a.setAttribute("href","./front/html/product.html?id=" + items[i]._id);
             image.setAttribute("src", items[i].imageUrl);
             h3.innerText = items[i].name;
             p.innerText = items[i].description;
