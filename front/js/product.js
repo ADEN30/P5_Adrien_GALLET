@@ -17,9 +17,11 @@ let NbRegex = /^([1-9]|[1-9][0-9]|100)$/;
 sel.addEventListener("change", function(){ //écoute du bouton "choisir sa couleur"
     if(NbRegex.test(button.value) && sel.value != ""){ // vérification à l'aide des regex si les données sont dans les boutons sont corrects
         addPanier.style.display = "block";
+        console.log("Ajout au pannier possible");
         validé.remove();
     }
     else{
+        console.log("Ajout au pannier impossible");
         validé.remove();
         addPanier.style.display = "none";
     }
@@ -28,8 +30,10 @@ button.addEventListener("change", function(){ //écoute du bouton "nombre de pro
     if(NbRegex.test(button.value) && sel.value != ""){
         addPanier.style.display = "block";
         validé.remove();
+        console.log("Ajout au pannier possible");
     }
     else{
+        console.log("Ajout au pannier impossible");
         validé.remove();
         addPanier.style.display = "none";
     }
@@ -39,6 +43,7 @@ button.addEventListener("change", function(){ //écoute du bouton "nombre de pro
 async function _GetHttp(lien){ // requête GET sur l'API
     const requete = await fetch(lien);
     const _json = await requete.json();
+
     return _json;
 }
 
@@ -116,6 +121,7 @@ async function listenAndSend(){ // Pemet de gérer l'ajout au panier
             validé.style.fontWeight = "bold";
             validé.style.color = "green";
             validé.style.paddingTop = "20px";
+            console.log("Le produit a été ajouté au panier")
         });
 }
 

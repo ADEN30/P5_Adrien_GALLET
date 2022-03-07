@@ -16,7 +16,8 @@ const kanap = fetch("http://localhost:3000/api/products")//appel GET de l'api
     console.log(id);
     return id;
     }
-async function Print (items){ //création des cards 
+
+function Print (items){ //création des cards 
             
     for(let i = 0; i<items.length; i++){
         if(i==0){ // si c'est la première card alors on complète les blocs déjà créés.
