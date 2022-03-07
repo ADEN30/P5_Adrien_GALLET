@@ -6,42 +6,47 @@ let titre = document.querySelector("head title");
 let sel = document.querySelector("select");
 let button = document.querySelector("#quantity");
 let addPanier = document.getElementById("addToCart");
+let article = document.querySelector("article");
+let div = document.createElement("div");
+let validé = article.appendChild(div);
+
 let couleur ="";
 let NbRegex = /^([1-9]|[1-9][0-9]|100)$/;
 
 
-sel.addEventListener("change", function(){
-    if(NbRegex.test(button.value) && sel.value != ""){
+sel.addEventListener("change", function(){ //écoute du bouton "choisir sa couleur"
+    if(NbRegex.test(button.value) && sel.value != ""){ // vérification à l'aide des regex si les données sont dans les boutons sont corrects
         addPanier.style.display = "block";
+        validé.remove();
     }
     else{
+        validé.remove();
         addPanier.style.display = "none";
     }
 });
-button.addEventListener("change", function(){
+button.addEventListener("change", function(){ //écoute du bouton "nombre de produit"
     if(NbRegex.test(button.value) && sel.value != ""){
         addPanier.style.display = "block";
+        validé.remove();
     }
     else{
+        validé.remove();
         addPanier.style.display = "none";
     }
     
 });
 
-console.log(tab);
-console.log(id[1]);
-
-async function _GetHttp(lien){
+async function _GetHttp(lien){ // requête GET sur l'API
     const requete = await fetch(lien);
     const _json = await requete.json();
     return _json;
 }
 
-async function AffichagePage(){
+async function AffichagePage(){ // Affiche le produit
     
     const data = await _GetHttp(_Url);
     for(let i = 0; i< data.length; i++){
-        if(data[i]._id == id[1]){
+        if(data[i]._id == id[1]){ // on vérifie dans l'appel API l'id qui correspond à l'id placé dans l'URL puis on créer l'élément
             document.getElementById("image").setAttribute("src",data[i].imageUrl);
             document.getElementById("image").setAttribute("alt", data[i].altTxt);
             document.getElementById("title").innerText = data[i].name;
@@ -55,26 +60,26 @@ async function AffichagePage(){
 }
 
 
-function AddOption(){
+function AddOption(){ // permet de créer de nouveau bloc "option" pour la couleur
     const option = document.createElement("option");
     const newElement = document.getElementById("colors").appendChild(option);
     return newElement;
 }
-async function getColors(i){
+
+async function getColors(i){ //récupère les couleurs sous form de tableau d'un produit et les place dans les options que l'on a créer
     const data = await _GetHttp(_Url);
     console.log(data[i].colors);
     const child = document.querySelector("#colors").childElementCount;
-    console.log(child);
     
     document.querySelector("#colors").childElementCount;
     console.log(document.querySelector("#colors").children[2].value);
-    for(let ind1 = 1; ind1 < 3; ind1++){ 
+    for(let ind1 = 1; ind1 < 3; ind1++){ // on remplis les options qui sont déjà présent t"ne que le nombre de couleur
         document.getElementById("colors").children[ind1].setAttribute("value",data[i].colors[ind1-1]);
         document.getElementById("colors").children[ind1].innerText = data[i].colors[ind1-1];
        
     }
-    if(data[i].colors.length >= 3){
-        for (let ind2= child; ind2 <data[i].colors.length +1; ind2++ ){
+    if(data[i].colors.length >= 3){ // On regarde la taille du tableau de couleur est si il est >= 3 alors on créé de nouveau blocs option et on les remplis avec les couleurs suivante
+        for (let ind2= child; ind2 <data[i].colors.length +1; ind2++ ){ // Permet de créer les nouveaux options de couleurs
         const element = AddOption();
         element.setAttribute("value",data[i].colors[ind2-1]);
         element.innerText = data[i].colors[ind2-1];
@@ -82,10 +87,11 @@ async function getColors(i){
     }
     
 }
-async function listenAndSend(){
+async function listenAndSend(){ // Pemet de gérer l'ajout au panier
     addPanier.style.display = "none";
-        addPanier.addEventListener("click", function(e){
-            
+    
+        addPanier.addEventListener("click", function(e){ //  écoute du bouton création de l'objet à envoyer et sauvegarde dans le locale storage
+            validé = article.appendChild(div);
             let object = {
                 identifiant : id[1],
                 quantite : button.value,
@@ -104,15 +110,19 @@ async function listenAndSend(){
                     }
                 }
             }
-            let article = JSON.stringify(object);
-            localStorage.setItem( id[1] + object.color, article);
+            let articles = JSON.stringify(object);
+            localStorage.setItem( id[1] + object.color, articles);
+            validé.innerText = "Ajouté au panier !";
+            validé.style.fontWeight = "bold";
+            validé.style.color = "green";
+            validé.style.paddingTop = "20px";
         });
 }
 
 
-async function main(){
+function main(){ // appel des principales fonctions
     
-    await AffichagePage();
+    AffichagePage();
     listenAndSend();
 }
 main();

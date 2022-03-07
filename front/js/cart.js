@@ -13,7 +13,7 @@ let city = document.getElementById("city");
 let email = document.getElementById("email");
 let order = document.getElementById("order");
 
-function Elements(element){
+function Elements(element){ // création des blocs pour les cards dans le panier
     switch(element){
         case 1: {let section = document.getElementById("cart__items"); return section; break;}
         case 2 : {let article = document.createElement("article"); return article; break;}
@@ -34,7 +34,7 @@ async function _GetHttp(lien){
 } 
 let data = await _GetHttp(_Url);
 
-function TurnQuantite(cle){
+function TurnQuantite(cle){ // Avec une cle, elle retourne la quantite d'un élément du localeStorage sous le format d'un nombre
     let Produit = localStorage.getItem(cle);
     let objet = JSON.parse(Produit);
     return parseInt(objet.quantite);
@@ -42,123 +42,86 @@ function TurnQuantite(cle){
 }
 
 
-let totalprix = 0;
-let nb =0 ;
-function listenInput(button, id, couleur, valeur){
-     totalprix = 0;
-     nb = 0;
-    if(localStorage.length != 0){
-        
-        button.addEventListener("change",function(){
-            nb = 0;
-            totalprix = 0;
-                
-                let object = {
-                    identifiant : id,
-                    quantite : button.value,
-                    color : couleur
-                }
-                
-                let article = JSON.stringify(object);
-                localStorage.setItem( id + object.color, article);
-            
-            if(NbRegex.test(button.value)){
-                button.style.boxShadow = "0px 0px 0px transparent";
-                for(let i = 0; i< localStorage.length; i++){
-                    let key = localStorage.key([i]);
-                    let objet = JSON.parse(localStorage.getItem(key));
-                    nb = nb + TurnQuantite(key);
-                    for (let ind1 = 0; ind1< valeur.length; ind1++){
-                        if(valeur[ind1]._id == objet.identifiant){
-                            totalprix = totalprix + valeur[ind1].price * TurnQuantite(key);
-                        }
-                    }
-                }
-            }
-            else{
-                button.style.boxShadow = "0px 0px 0px 5px red";
-            }
-            if(nb >= 0){
-                document.getElementById("totalQuantity").innerText = nb;
-                document.getElementById("totalPrice").innerText = totalprix;
-            }
-            else{
-                nb = 0;
-                totalprix = 0;
-                document.getElementById("totalQuantity").innerText = nb;
-                document.getElementById("totalPrice").innerText = totalprix;
-            }
-            BtnEnvois(nameRegex.test(firstName.value),nameRegex.test(lastName.value), adressRegex.test(address.value), cityRegex.test(city.value), emailRegex.test(email.value));
-            
-        });
-    }
-    for(let i = 0; i< localStorage.length; i++){
-            let key = localStorage.key([i]);
+let totalprix = 0; // total prix
+let nb =0 ; // total article
+
+function Total_priceArticle(donnee){
+    totalprix = 0;
+    nb = 0;
+    if(donnee.length >0){
+        for(let i = 0; i< localStorage.length; i++){ // On itère les éléments du localeStorage
+            let key = localStorage.key([i]); 
             let objet = JSON.parse(localStorage.getItem(key));
             nb = nb + TurnQuantite(key);
-            for (let ind1 = 0; ind1< valeur.length; ind1++){
-                if(valeur[ind1]._id == objet.identifiant){
-                    totalprix = totalprix + valeur[ind1].price * TurnQuantite(key);
+            for (let ind1 = 0; ind1< donnee.length; ind1++){ // On itère  les produits retournés par l'API
+                if(donnee[ind1]._id == objet.identifiant){ // Si l'id un produit du localeStorage et de l'API sont similaires alors on récupère la quantité du produit dans le localeStorage
+                    totalprix = totalprix + donnee[ind1].price * TurnQuantite(key);
                 }
             }
         }
+    }
     document.getElementById("totalQuantity").innerText = nb;
     document.getElementById("totalPrice").innerText = totalprix;
-    
 }
 
-async function supprimer(cle,couleur, element, valeur){
-        
-    element.addEventListener("click", function(){
-        localStorage.removeItem(cle+couleur);
-         let element_delete = element.parentElement.parentElement.parentElement.parentElement;
-         let element_delete_id = element_delete.getAttribute("data-id");
-         let element_delete_color = element_delete.getAttribute("data-color");
-        if(element_delete_id == cle && element_delete_color == couleur){
-            element_delete.style.display = "none";
-        }
-        nb =0;
-        totalprix = 0;
-        for(let i = 0; i< localStorage.length; i++){
-            let key = localStorage.key([i]);
-            let objet = JSON.parse(localStorage.getItem(key));
-            nb = nb + TurnQuantite(key);
-            for (let ind1 = 0; ind1< valeur.length; ind1++){
-                if(valeur[ind1]._id == objet.identifiant){
-                    totalprix = totalprix + valeur[ind1].price * TurnQuantite(key);
-                }
+function listenInput(button, id, couleur, valeur){ // Permet de calculer le ombre de total d'article et le montant total du panier
+
+    button.addEventListener("change",function(){ // écoute les boutons pour ajouter des quantité
+            
+            let object = { // création d'un objet
+                identifiant : id,
+                quantite : button.value,
+                color : couleur
             }
+            
+            let article = JSON.stringify(object);
+            localStorage.setItem( id + object.color, article);
+        
+        if(NbRegex.test(button.value)){ // on test la valeur entrée par l'utilisateur
+            button.style.boxShadow = "0px 0px 0px transparent";
+            Total_priceArticle(valeur);
         }
-        document.getElementById("totalQuantity").innerText = nb;
-        document.getElementById("totalPrice").innerText = totalprix;
+        else{
+            button.style.boxShadow = "0px 0px 0px 5px red";
+            Total_priceArticle(0);
+        }
+        BtnEnvois(nameRegex.test(firstName.value),nameRegex.test(lastName.value), adressRegex.test(address.value), cityRegex.test(city.value), emailRegex.test(email.value));
+    });
+    Total_priceArticle(valeur);
+}
+
+function supprimer(element, valeur){ // Permet de gérer la suppression d'un article
+        
+    element.addEventListener("click", function(){ // écoute du bouton supprimer
+        let element_delete = element.parentElement.parentElement.parentElement.parentElement;
+        let element_delete_id = element_delete.getAttribute("data-id");
+        let element_delete_color = element_delete.getAttribute("data-color");
+        localStorage.removeItem(element_delete_id+element_delete_color);
+        element_delete.remove();
+        console.log(element_delete_id+element_delete_color);
+        Total_priceArticle(valeur);
         BtnEnvois(nameRegex.test(firstName.value),nameRegex.test(lastName.value), adressRegex.test(address.value), cityRegex.test(city.value), emailRegex.test(email.value));
     });
 }
 
 
 
-async function affichage(){
+function affichage(){ // Permet d'afficher tout les articles
     if(localStorage.length == 0){
         let article = document.querySelector("article");
         article.style.display = "none"
-        document.getElementById("totalQuantity").innerText = nb;
-        document.getElementById("totalPrice").innerText = totalprix;
+        Total_priceArticle(0);
     }
-    for(let i = 0; i < localStorage.length; i++){
+    for(let i = 0; i < localStorage.length; i++){ // récupère l'id et la couleur des produits dans le localStorage + création des cards
         let key = localStorage.key([i]);
-        let ID = "";
-        let color= "";
-        for(let ind2 = 0; ind2 < 32; ind2++){
-           ID= ID+ key[ind2];
-        }
-        for(let ind3 = 32; ind3 < key.length; ind3++){
-            color = color+ key[ind3];
-        }
+        let objet = JSON.parse(localStorage.getItem(key));
+        let ID = objet.identifiant;
+        let color= objet.color;
 
-        for(let ind4=0; ind4<data.length; ind4++){
+        for(let ind4=0; ind4<data.length; ind4++){ // Récupère le prix des articles
             if(data[ind4]._id==ID){
                 let prix = data[ind4].price;
-                if(i==0){
+                if(i==0){ // place le premier élément dans les blocs qui sont déjà créés
                     let cart = document.querySelector("#cart__items .cart__item");
                     cart.setAttribute("data-id", data[ind4]._id);
                     cart.setAttribute("data-color", color);
@@ -175,11 +138,11 @@ async function affichage(){
                     setting_quantity.children[1].value = TurnQuantite(key);
 
                     let setting_delete = document.querySelector("#cart__items .cart__item__content .cart__item__content__settings .cart__item__content__settings__delete .deleteItem");
-                    await supprimer(data[ind4]._id,color, setting_delete, data);
+                    supprimer(setting_delete, data);
                     listenInput(setting_quantity.children[1], ID, color, data);
                     }
 
-                else{
+                else{ // créer de nouvelles cards
                     let cart_item = Elements(1).appendChild( Elements(2));
                     cart_item.setAttribute("class","cart__item");
                     cart_item.setAttribute("data-id", data[ind4]._id);
@@ -222,23 +185,24 @@ async function affichage(){
                     let deleteItem = cart_item_content_settings_delete.appendChild(Elements(6));
                     deleteItem.setAttribute("class", "deleteItem")
                     deleteItem.innerText = "Supprimer";
-                    await supprimer(data[ind4]._id,color, deleteItem, data);
+                    console.log(data[ind4]._id);
+                    supprimer(deleteItem, data);
                     listenInput(itemQuantity, ID, color, data);
                      
                 }
-                
-                
+
             }
             
         }
         
-    } 
+    }
+     
 }
 
-async function VerificationForm(){
+function VerificationForm(){ // vérifiaction du formulaire à l'aide des regex
 
     firstName.addEventListener("input", function(){
-        if(nameRegex.test(firstName.value)){
+        if(nameRegex.test(firstName.value)){ // vérifie la valeur entrée dans le champ
         firstName.style.boxShadow = "0px 0px 0px 3px green";
         document.getElementById("firstNameErrorMsg").style.display = "none";
     }
@@ -322,9 +286,9 @@ async function VerificationForm(){
     
 }
 
- function BtnEnvois(prenom, nom, adresse, ville, email){
+ function BtnEnvois(prenom, nom, adresse, ville, email){ // Affichage du bouton envoyer
     let order = document.getElementById("order");
-    if(prenom && nom && adresse && ville && email && nb != 0){
+    if(prenom && nom && adresse && ville && email && nb != 0){ // vérififcation des conditions nécessaire pour l'envois du formulaire
         order.style.display = "block";
         order.addEventListener("click", function(e){
             e.preventDefault();
@@ -334,18 +298,17 @@ async function VerificationForm(){
     }
     else{
         order.style.display = "none";
-        
     }
 
 }
-async function get_Panier_ID(nbProduit){
+function get_Panier_ID(){ // On ajoute les idée des produit présent dans le panier, dans un tableau et on retourne ce tableau
     let ID = [];
     for(let i = 0; i<localStorage.length; i++){
         let key = localStorage.key([i]);
         let article_json = localStorage.getItem(key);
         let article_objet = JSON.parse(article_json);
-        for(let i1 = 0; i1< nbProduit.length; i1++){
-            if(article_objet.identifiant == nbProduit[i1]._id){
+        for(let i1 = 0; i1< data.length; i1++){
+            if(article_objet.identifiant == data[i1]._id){
                 ID.push(article_objet.identifiant);
                 console.log(article_objet.identifiant);
             }
@@ -353,7 +316,7 @@ async function get_Panier_ID(nbProduit){
     }
     return ID;
 }
-async function userData(){
+function userData(){ // créé l'objet client avec ses données
     let client = {
     firstName: document.getElementById("firstName").value,
     lastName: document.getElementById("lastName").value,
@@ -364,8 +327,8 @@ async function userData(){
 return client;
 }  
      
- async function sendForm(){
-     console.log(JSON.stringify({contact : await userData(), products : await get_Panier_ID(data)}));
+  function sendForm(){ // Envois le formulaire à l'API 
+     console.log(JSON.stringify({contact : userData(), products : get_Panier_ID(data)}));
     
     fetch(_Url + "/order", {
         method : "POST",
@@ -374,8 +337,8 @@ return client;
             "Content-Type": "application/json"
         }, 
         body : JSON.stringify(
-            { contact: await userData(),
-             products: await get_Panier_ID(data)}
+            { contact: userData(),
+             products: get_Panier_ID()}
             )
     })
     .then(function(reponse){
@@ -390,9 +353,9 @@ return client;
     });
 }
 
-async function main(){
-    setInterval(await affichage());
-    setInterval(await VerificationForm());
+async function main(){ // appel des fonctions 
+    affichage();
+    VerificationForm();
 }
 
 main();

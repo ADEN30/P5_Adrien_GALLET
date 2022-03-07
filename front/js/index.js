@@ -1,4 +1,4 @@
-const kanap = fetch("http://localhost:3000/api/products")
+const kanap = fetch("http://localhost:3000/api/products")//appel GET de l'api
     .then(function(res){
         if(res.ok){
             return res.json();
@@ -8,25 +8,24 @@ const kanap = fetch("http://localhost:3000/api/products")
         Print(data);
     })
     .catch(function(){
-        console.log("error");
+        console.log("error de l'appel de l'API");
         
     });
     function Id(){
     let id = document.querySelector("#items a").getAttribute("href");
     console.log(id);
     return id;
-}
-async function Print (items){
-    
+    }
+async function Print (items){ //création des cards 
             
     for(let i = 0; i<items.length; i++){
-        if(i==0){
+        if(i==0){ // si c'est la première card alors on complète les blocs déjà créés.
             document.getElementById("productName").innerText = items[0].name;
             document.getElementById("productDescription").innerText = items[0].description;
             document.querySelector("#items a article img").setAttribute("src", items[0].imageUrl);
             document.querySelector("#items a").setAttribute("href", "./front/html/product.html?id=" +items[0]._id);
         }
-        else{
+        else{ // sinon on créé de nouveaux blocs
             let p = document.createElement("p");
             let article = document.createElement("article");
             let h3 = document.createElement("h3");
