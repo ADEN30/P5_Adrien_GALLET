@@ -293,15 +293,17 @@ function VerificationForm(){ // vérifiaction du formulaire à l'aide des regex
         order.addEventListener("click", function(e){
             e.preventDefault();
             sendForm();
+            console.log("Tout est bon");
         });
         
     }
     else{
         order.style.display = "none";
+        console.log("un problème a lieu dans le formulaire ou dans la quantite total des produit = 0");
     }
 
 }
-function get_Panier_ID(){ // On ajoute les idée des produit présent dans le panier, dans un tableau et on retourne ce tableau
+function get_Panier_ID(){ // On ajoute les id des produits présent dans le panier, dans un tableau et on retourne ce tableau
     let ID = [];
     for(let i = 0; i<localStorage.length; i++){
         let key = localStorage.key([i]);
@@ -349,8 +351,9 @@ return client;
     })
     .then(function(donnee){
         location.assign("./confirmation.html?id="+donnee.orderId);
-        console.log(donnee.orderId);
-    });
+        console.log("Succès : "+donnee.orderId);
+    })
+    .catch(()=> console.log("échec"));
 }
 
 async function main(){ // appel des fonctions 

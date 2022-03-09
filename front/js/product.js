@@ -59,6 +59,7 @@ async function AffichagePage(){ // Affiche le produit
             document.getElementById("price").innerText = data[i].price;
             document.getElementById("description").innerText = data[i].description;
             await getColors(i);
+            console.log("trouvé");
         }
     }
 

@@ -6,16 +6,19 @@ const kanap = fetch("http://localhost:3000/api/products")//appel GET de l'api
     })
     .then(function (data){
         Print(data);
+        console.log("OK");
     })
     .catch(function(){
         console.log("error de l'appel de l'API");
         
     });
-    function Id(){
-    let id = document.querySelector("#items a").getAttribute("href");
-    console.log(id);
-    return id;
-    }
+
+    
+function Id(){
+let id = document.querySelector("#items a").getAttribute("href");
+console.log(id);
+return id;
+}
 
 function Print (items){ //création des cards 
             
