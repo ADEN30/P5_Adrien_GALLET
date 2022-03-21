@@ -1,5 +1,6 @@
-let tab = window.location.search;
-const id = tab.split("=");
+let params = new URLSearchParams(window.location.search)
+const id = params.get("id");
+console.log(id);
 const _Url = "http://localhost:3000/api/products";
 
 let titre = document.querySelector("head title");
@@ -51,7 +52,7 @@ async function AffichagePage(){ // Affiche le produit
     
     const data = await _GetHttp(_Url);
     for(let i = 0; i< data.length; i++){
-        if(data[i]._id == id[1]){ // on vérifie dans l'appel API l'id qui correspond à l'id placé dans l'URL puis on créer l'élément
+        if(data[i]._id == id){ // on vérifie dans l'appel API l'id qui correspond à l'id placé dans l'URL puis on créer l'élément
             document.getElementById("image").setAttribute("src",data[i].imageUrl);
             document.getElementById("image").setAttribute("alt", data[i].altTxt);
             document.getElementById("title").innerText = data[i].name;
@@ -99,17 +100,17 @@ async function listenAndSend(){ // Pemet de gérer l'ajout au panier
         addPanier.addEventListener("click", function(e){ //  écoute du bouton création de l'objet à envoyer et sauvegarde dans le locale storage
             validé = article.appendChild(div);
             let object = {
-                identifiant : id[1],
+                identifiant : id,
                 quantite : button.value,
                 color : sel.value
             };
-            let valeur = localStorage.getItem((id[1] + object.color));
+            let valeur = localStorage.getItem((id + object.color));
             console.log(valeur);
             let PastObject = JSON.parse(valeur);
             
             if(valeur != null){
                 for( item in localStorage){
-                    if(item  == id[1] + sel.value){
+                    if(item  == id + sel.value){
                         
                         object.quantite = parseInt(object.quantite) + parseInt(PastObject.quantite);
                         
@@ -117,7 +118,7 @@ async function listenAndSend(){ // Pemet de gérer l'ajout au panier
                 }
             }
             let articles = JSON.stringify(object);
-            localStorage.setItem( id[1] + object.color, articles);
+            localStorage.setItem( id + object.color, articles);
             validé.innerText = "Ajouté au panier !";
             validé.style.fontWeight = "bold";
             validé.style.color = "green";

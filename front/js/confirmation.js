@@ -1,8 +1,5 @@
-let parametre = window.location.search;
-let id = "";
-for(let i = 4; i< parametre.length; i++){
-    id = id + parametre[i];
-}
+let parametre = new URLSearchParams(window.location.search);
+let Ncommande = parametre.get("id");
 localStorage.clear();
-document.getElementById("orderId").innerText = id;
+document.getElementById("orderId").innerText = Ncommande;
 
